@@ -1,4 +1,4 @@
 # Stone password generator
 
-latest version 0.7
+latest version 0.8
 
