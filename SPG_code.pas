@@ -1,13 +1,13 @@
 program genpassword;
 uses crt;
 var
-password, splash, kur, key, buk, buk_caps, simv_other, namef, name_alph_new, info_alph_new, info_alph, simv_alph:string;
+password, splash, kur, key, buk, buk_caps, set_name, simv_other, namef, name_alph_new, info_alph_new, info_alph, simv_alph:string;
 settings:array[1..8] of byte;
 name_alph:array[1..3] of string;
 simv:array[1..3] of string;
 flag_alph:array[1..3] of boolean;
 i, c, b, d, r:integer;
-setf:textFile;
+setf, setff:textFile;
 flag:boolean;
 begin
 kur:='home';
@@ -22,18 +22,16 @@ settings[8]:=0;
 flag_alph[1]:=false;
 flag_alph[2]:=false;
 flag_alph[3]:=false;
+set_name:='settings' ;
 flag:=false;
 buk:='qwertyuiopasdfghjklzxcvbnm';
 buk_caps:='QWERTYUIOPASDFGHJKLZXCVBNM';
 simv_other:='_-#%/\|<>^[]~;*&=+'; 
 simv[1]:='';
-//сюды чтение и создание файла с настройками
-  
-//
   while true do begin
     clrscr; 
     writeln('Stone Password Generator');
-    writeln('[Stolar Studio]   v0.7');writeln;
+    writeln('[Stolar Studio]   v0.8');writeln;
     writeln('<settings> - перейти к настройкам');
     writeln('<gen> - сгенерировать пароль по настройкам');
     writeln('<new> - создать свой алфавит ');
@@ -54,9 +52,9 @@ simv[1]:='';
       writeln('3)использовать необычные символы : ' + settings[3]);
       writeln('4)символов в пароле : ' + settings[4]);
       writeln('5)использовать цифры : ' + settings[5]);
-        writeln('6)использовать свой алфавит(1) (' + name_alph[1] +') : ' + settings[6]);
-        writeln('7)использовать свой алфавит(2) (' + name_alph[2] +') : ' + settings[7]);
-        writeln('8)использовать свой алфавит(3) (' + name_alph[3] +') : ' + settings[8]);
+      writeln('6)использовать свой алфавит(1) (' + name_alph[1] +') : ' + settings[6]);
+      writeln('7)использовать свой алфавит(2) (' + name_alph[2] +') : ' + settings[7]);
+      writeln('8)использовать свой алфавит(3) (' + name_alph[3] +') : ' + settings[8]);
       writeln;
     end;
     write('[' + kur + ']>' );
@@ -68,8 +66,13 @@ simv[1]:='';
         readln(namef);
         assign(setf, namef);
         rewrite(setf);
-        for i := 1 to 5 do
+        for i := 1 to 8 do
           writeln(setf, settings[i]);
+        for i := 1 to 3 do begin
+          writeln(setf, flag_alph[i]);
+          if flag_alph[i] = true then
+            writeln(setf, name_alph[i]);
+        end;
         close(setf);
       end else
       if key = 'open' then begin
@@ -77,8 +80,21 @@ simv[1]:='';
         readln(namef);
         assign(setf, namef);
         reset(setf);
-        for i := 1 to 5 do
+        for i := 1 to 8 do
           readln(setf, settings[i]);
+        for i := 1 to 3 do begin
+          readln(setf, key);
+          if key = 'true' then
+            flag_alph[i] := true else
+            flag_alph[i] := false;
+          if flag_alph[i] = true then begin
+            readln(setf, name_alph[i]);
+            assign(setff, name_alph[i]);
+            reset(setff);
+            readln(setff, simv[i]);
+            close(setff);
+          end;
+        end;
         close(setf);
       end else
       if key = 'select 1' then begin
@@ -164,6 +180,11 @@ simv[1]:='';
         settings[6]:=0;
         settings[7]:=0;
         settings[8]:=0;
+        for i := 1 to 3 do begin
+          flag_alph[i]:=false;
+          simv[i]:='';
+          name_alph[i]:='';
+        end;
       end else if key = 'home' then begin
           kur:='home' ;
         end;
@@ -255,8 +276,5 @@ simv[1]:='';
       writeln('Press enter... ');
       readln;
     end else if key = 'exit' then break;
-      //через каждую комманду сохранять текущие настройки
-        
-      //
   end;
 end.
